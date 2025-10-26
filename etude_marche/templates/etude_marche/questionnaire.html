@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Questionnaire Transport</title>
+    <link rel="stylesheet" href="{% static 'css/questionnaire.css' %}">
+</head>
+<body>
+<div class="container">
+    <h1>Questionnaire Transport France-Sénégal</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <!-- Champs standards -->
+        <div class="question-card">
+            {{ form.prenom.label_tag }} {{ form.prenom }}
+            {% if form.prenom.errors %}<p style="color:red;">{{ form.prenom.errors }}</p>{% endif %}
+        </div>
+
+        <div class="question-card">
+            {{ form.age.label_tag }} {{ form.age }}
+            {% if form.age.errors %}<p style="color:red;">{{ form.age.errors }}</p>{% endif %}
+        </div>
+
+        <div class="question-card">
+            {{ form.sexe.label_tag }} {{ form.sexe }}
+            {% if form.sexe.errors %}<p style="color:red;">{{ form.sexe.errors }}</p>{% endif %}
+        </div>
+
+        <div class="question-card">
+            {{ form.ville.label_tag }} {{ form.ville }}
+            {% if form.ville.errors %}<p style="color:red;">{{ form.ville.errors }}</p>{% endif %}
+        </div>
+
+        <div class="question-card">
+            {{ form.interet_transport.label_tag }} {{ form.interet_transport }}
+            {% if form.interet_transport.errors %}<p style="color:red;">{{ form.interet_transport.errors }}</p>{% endif %}
+            <div class="bar-container">
+                <div class="bar-fill" style="width: {{ form.interet_transport.value|default:'0' }}%;"></div>
+            </div>
+        </div>
+
+        <div class="question-card">
+            {{ form.frequence_voyage.label_tag }} {{ form.frequence_voyage }}
+            {% if form.frequence_voyage.errors %}<p style="color:red;">{{ form.frequence_voyage.errors }}</p>{% endif %}
+            <div class="bar-container">
+                <div class="bar-fill" style="width: {{ form.frequence_voyage.value|default:'0' }}%;"></div>
+            </div>
+        </div>
+
+        <div class="question-card">
+            {{ form.budget.label_tag }} {{ form.budget }}
+            {% if form.budget.errors %}<p style="color:red;">{{ form.budget.errors }}</p>{% endif %}
+            <div class="bar-container">
+                <div class="bar-fill" style="width: {{ form.budget.value|default:'0' }}%;"></div>
+            </div>
+        </div>
+
+        <!-- Nouveaux champs avec boutons radio -->
+        <div class="question-card">
+            <label>{{ form.type_colis.label }}</label>
+            <div class="radio-group">
+                {% for radio in form.type_colis %}
+                    {{ radio.tag }} {{ radio.choice_label }}<br>
+                {% endfor %}
+            </div>
+            {% if form.type_colis.errors %}<p style="color:red;">{{ form.type_colis.errors }}</p>{% endif %}
+        </div>
+
+        <div class="question-card">
+            <label>{{ form.services_souhaites.label }}</label>
+            {{ form.services_souhaites }}
+            {% if form.services_souhaites.errors %}<p style="color:red;">{{ form.services_souhaites.errors }}</p>{% endif %}
+        </div>
+
+        <div class="question-card">
+            <label>{{ form.moyen_paiement.label }}</label>
+            <div class="radio-group">
+                {% for radio in form.moyen_paiement %}
+                    {{ radio.tag }} {{ radio.choice_label }}<br>
+                {% endfor %}
+            </div>
+            {% if form.moyen_paiement.errors %}<p style="color:red;">{{ form.moyen_paiement.errors }}</p>{% endif %}
+        </div>
+
+        <div class="question-card">
+            <label>{{ form.sensibilite_prix.label }}</label>
+            <div class="radio-group">
+                {% for radio in form.sensibilite_prix %}
+                    {{ radio.tag }} {{ radio.choice_label }}<br>
+                {% endfor %}
+            </div>
+            {% if form.sensibilite_prix.errors %}<p style="color:red;">{{ form.sensibilite_prix.errors }}</p>{% endif %}
+        </div>
+
+        <button type="submit">Envoyer</button>
+    </form>
+</div>
+
+<script>
+    // Animation progressive des barres
+    document.querySelectorAll('.bar-fill').forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0';
+        setTimeout(() => { bar.style.width = width; }, 100);
+    });
+</script>
+</body>
+</html>

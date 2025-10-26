@@ -1,0 +1,162 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Plan de Financement - {{ projet }}</title>
+    <style>
+        @page { size: A4; margin: 50px 30px 70px 30px; }
+        body { font-family: Arial, sans-serif; color: #333; }
+        header { position: fixed; top: -40px; left: 0; right: 0; height: 50px; text-align: center; }
+        header img { height: 40px; }
+        footer { position: fixed; bottom: -50px; left: 0; right: 0; height: 40px;
+                 text-align: center; font-size: 12px; color: #555; }
+        h1, h2, h3 { color: #2C3E50; margin-bottom: 5px; }
+        .section { background-color: #f8f9fa; border-radius: 10px; padding: 15px; margin-bottom: 20px;
+                   box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .charts { display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between; }
+        .chart-container { flex: 1 1 48%; max-width: 48%; text-align: center; margin-bottom: 15px; }
+        img { max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 5px; background: #fff; padding: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
+        th, td { padding: 6px 10px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #2980B9; color: white; }
+        .section-title { background-color: #3498DB; color: white; padding: 5px 10px; border-radius: 5px; margin-bottom: 10px; }
+
+        /* --- Boutons PDF / CSV --- */
+        .download-buttons { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; justify-content:center; }
+        .download-buttons a { display:flex; align-items:center; padding:10px 20px; border-radius:8px;
+                               color:white; font-weight:bold; text-decoration:none; transition:opacity 0.3s; }
+        .download-buttons a.pdf { background-color:#2980B9; }
+        .download-buttons a.csv { background-color:#27AE60; }
+        .download-buttons a span { margin-right:8px; }
+        .download-buttons a:hover { opacity:0.85; }
+
+        @media (max-width:600px) {
+            .download-buttons { flex-direction: column; align-items: stretch; }
+            .download-buttons a { justify-content:center; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="{{ logo_url }}" alt="Logo">
+    <h2>{{ projet }}</h2>
+</header>
+
+<footer>
+    Page <pdf:pagenumber> / <pdf:pagecount>
+</footer>
+
+<main>
+
+    <!-- --- Boutons de téléchargement --- -->
+    <div class="download-buttons">
+        <a href="{% url 'generate_pdf_or_csv' %}" class="pdf"><span>📄</span>Télécharger PDF</a>
+        <a href="{% url 'generate_pdf_or_csv' %}?format=csv" class="csv"><span>📊</span>Télécharger CSV</a>
+    </div>
+
+    <h1>{{ projet }}</h1>
+    <p><strong>Date de lancement :</strong> {{ date_lancement }}</p>
+    <p><strong>Type de transport :</strong> {{ transport_type }}</p>
+    <p><strong>Villes de départ :</strong> {{ villes_depart|join:", " }}</p>
+    <p><strong>Villes d'arrivée :</strong> {{ villes_arrivee|join:", " }}</p>
+    <p><strong>Clients ciblés :</strong> {{ clients }}</p>
+
+    <div class="section">
+        <div class="section-title"><h2>Graphiques de l'étude</h2></div>
+        <div class="charts">
+            <div class="chart-container">
+                <h3>Participants par ville</h3>
+                {% if ville_chart %}
+                    <img src="data:image/png;base64,{{ ville_chart }}">
+                {% else %}
+                    <p>Aucune donnée disponible.</p>
+                {% endif %}
+            </div>
+            <div class="chart-container">
+                <h3>Fréquence de voyage</h3>
+                {% if freq_chart %}
+                    <img src="data:image/png;base64,{{ freq_chart }}">
+                {% else %}
+                    <p>Aucune donnée disponible.</p>
+                {% endif %}
+            </div>
+            <div class="chart-container">
+                <h3>Budget moyen par ville</h3>
+                {% if budget_chart %}
+                    <img src="data:image/png;base64,{{ budget_chart }}">
+                {% else %}
+                    <p>Aucune donnée disponible.</p>
+                {% endif %}
+            </div>
+            <div class="chart-container">
+                <h3>Type de colis</h3>
+                {% if type_colis_chart %}
+                    <img src="data:image/png;base64,{{ type_colis_chart }}">
+                {% else %}
+                    <p>Aucune donnée disponible.</p>
+                {% endif %}
+            </div>
+            <div class="chart-container">
+                <h3>Services souhaités</h3>
+                {% if services_chart %}
+                    <img src="data:image/png;base64,{{ services_chart }}">
+                {% else %}
+                    <p>Aucune donnée disponible.</p>
+                {% endif %}
+            </div>
+            <div class="chart-container">
+                <h3>Moyens de paiement</h3>
+                {% if paiement_chart %}
+                    <img src="data:image/png;base64,{{ paiement_chart }}">
+                {% else %}
+                    <p>Aucune donnée disponible.</p>
+                {% endif %}
+            </div>
+            <div class="chart-container">
+                <h3>Sensibilité au prix</h3>
+                {% if sensibilite_chart %}
+                    <img src="data:image/png;base64,{{ sensibilite_chart }}">
+                {% else %}
+                    <p>Aucune donnée disponible.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title"><h2>Résumé des réponses</h2></div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Ville</th>
+                    <th>Fréquence</th>
+                    <th>Budget (FCFA)</th>
+                    <th>Type de colis</th>
+                    <th>Services souhaités</th>
+                    <th>Moyen de paiement</th>
+                    <th>Sensibilité au prix</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in reponses %}
+                <tr>
+                    <td>{{ r.ville }}</td>
+                    <td>{{ r.frequence_voyage }}</td>
+                    <td>{{ r.budget }}</td>
+                    <td>{{ r.type_colis }}</td>
+                    <td>{{ r.services_souhaites }}</td>
+                    <td>{{ r.moyen_paiement }}</td>
+                    <td>{{ r.sensibilite_prix }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7">Aucune réponse disponible.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,150 @@
+/* === Reset & base === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+    color: #2C3E50;
+    line-height: 1.6;
+    padding: 20px;
+}
+
+/* === Container === */
+.container {
+    max-width: 750px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+}
+
+/* === Headings === */
+h1 {
+    text-align: center;
+    color: #1ABC9C;
+    margin-bottom: 30px;
+}
+
+/* === Question Cards === */
+.question-card {
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    background: linear-gradient(120deg, #ECF0F1 0%, #FFFFFF 100%);
+}
+
+.question-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+/* Icons per question */
+.question-card[data-question="interet_transport"] label::before {
+    content: "🚀";
+    margin-right: 8px;
+}
+
+.question-card[data-question="frequence_voyage"] label::before {
+    content: "📅";
+    margin-right: 8px;
+}
+
+.question-card[data-question="budget"] label::before {
+    content: "💰";
+    margin-right: 8px;
+}
+
+.question-card[data-question="prenom"] label::before,
+.question-card[data-question="age"] label::before,
+.question-card[data-question="ville"] label::before,
+.question-card[data-question="sexe"] label::before {
+    content: "📝";
+    margin-right: 8px;
+}
+
+/* === Form fields === */
+label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 10px;
+}
+
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #BDC3C7;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #1ABC9C;
+    box-shadow: 0 0 8px rgba(26,188,156,0.3);
+    outline: none;
+}
+
+/* === Progress bars avec dégradé === */
+.bar-container {
+    background-color: #dfe6e9;
+    border-radius: 8px;
+    height: 14px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    width: 0;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #1ABC9C, #16A085);
+    transition: width 1s ease;
+}
+
+/* === Buttons === */
+button, input[type="submit"] {
+    background: linear-gradient(120deg, #1ABC9C, #16A085);
+    color: #fff;
+    border: none;
+    padding: 14px 25px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    display: block;
+    margin: 25px auto 0 auto;
+    width: 50%;
+}
+
+button:hover,
+input[type="submit"]:hover {
+    background: linear-gradient(120deg, #16A085, #1ABC9C);
+    transform: translateY(-2px);
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    input[type="submit"] {
+        width: 100%;
+    }
+}
