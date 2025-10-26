@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Plan de Financement Résultat</title>
+</head>
+<body>
+    <h1>Plan de financement : {{ plan.nom_projet }}</h1>
+    <ul>
+        <li>Montant total : {{ plan.montant_total }} €</li>
+        <li>Apport propre : {{ plan.apport_propre }} €</li>
+        <li>Financement bancaire : {{ plan.financement_banque }} €</li>
+        <li>Autres financements : {{ plan.autres_financements }} €</li>
+    </ul>
+    <a href="{% url 'plan_financement' %}">Créer un autre plan</a>
+</body>
+</html>
