@@ -1,3 +1,4 @@
 cairo
 libcairo2-dev
 libffi-dev
+pkg-config
