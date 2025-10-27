@@ -9,10 +9,10 @@ dj-database-url==3.0.1
 # Gestion des PDF
 xhtml2pdf==0.2.17
 reportlab==4.4.4
+cairocffi==1.4.0
 
 # Graphiques
 matplotlib==3.10.6
-cairocffi==1.4.0
 pandas==2.1.1  # version stable récente
 
 # Utilitaires
@@ -23,6 +23,7 @@ bcrypt==5.0.0
 # Encodages et langues
 arabic-reshaper==3.0.0
 python-bidi==0.6.6
+
 
 
 
