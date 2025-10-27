@@ -220,7 +220,9 @@ LOGGING = {
             'propagate': False,
         },
     },
-}
+}[build]
+apt = ["python3-dev", "libcairo2-dev", "libpq-dev"]
+
 
 
 
