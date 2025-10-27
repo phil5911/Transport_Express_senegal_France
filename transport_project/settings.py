@@ -17,25 +17,35 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# --- Charge le fichier .env ---
+load_dotenv(dotenv_path=BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-c_99b&5fezny6wz^+1h0#@ix#ka=fr2)e4-i%*3kn8*ne8^3yf"
+
+# --- Clé secrète et mode DEBUG ---
+SECRET_KEY = os.environ.get('SECRET_KEY', 'changeme')
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-load_dotenv()  # charge le fichier .env
+# --- ALLOWED_HOSTS ---
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = [
+        'web-production-f48c1.up.railway.app',
+        '127.0.0.1',
+        'localhost'
+    ]
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-SECRET_KEY = os.getenv("SECRET_KEY", "fallback_secret_key")
-DEBUG = os.getenv("DEBUG", "False") == "True"
-
-ALLOWED_HOSTS = []
-
+    CSRF_TRUSTED_ORIGINS = [
+        'https://web-production-f48c1.up.railway.app',
+        'http://127.0.0.1:8000',
+    ]
 
 # Application definition
 
@@ -59,7 +69,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-
 ROOT_URLCONF = "transport_project.urls"
 
 TEMPLATES = [
@@ -79,20 +88,52 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "transport_project.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+import os
+import dj_database_url
+
+# --- ENVIRONNEMENT ---
+DEBUG = os.getenv("DEBUG", "True").lower() == "true"
+IS_RAILWAY = os.getenv("RAILWAY_ENVIRONMENT", "False").lower() == "true"
+
+# --- SECRET KEY ---
+SECRET_KEY = os.getenv(
+    "SECRET_KEY",
+    "django-insecure-default-key"  # Valeur de secours pour dev local
+)
+
+# --- ALLOWED HOSTS & CSRF ---
+if DEBUG:
+    ALLOWED_HOSTS = ["*"]
+    CSRF_TRUSTED_ORIGINS = []
+else:
+    RAILWAY_HOST = os.getenv("RAILWAY_HOST", "web-production-f48c1.up.railway.app")
+    ALLOWED_HOSTS = [RAILWAY_HOST, "127.0.0.1", "localhost"]
+    CSRF_TRUSTED_ORIGINS = [f"https://{RAILWAY_HOST}", "http://127.0.0.1:8000"]
+
+# --- DATABASE ---
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if not DATABASE_URL and not IS_RAILWAY:
+    # base locale
+    DATABASE_URL = (
+        f"postgresql://{os.getenv('LOCAL_DB_USER','admin')}:"
+        f"{os.getenv('LOCAL_DB_PASSWORD','123456')}@"
+        f"{os.getenv('LOCAL_DB_HOST','localhost')}:"
+        f"{os.getenv('LOCAL_DB_PORT','5432')}/"
+        f"{os.getenv('LOCAL_DB_NAME','transport_db')}"
+    )
+elif not DATABASE_URL:
+    raise Exception("DATABASE_URL manquante !")
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv("DB_NAME"),
-        'USER': os.getenv("DB_USER"),
-        'PASSWORD': os.getenv("DB_PASSWORD"),
-        'HOST': os.getenv("DB_HOST"),
-        'PORT': os.getenv("DB_PORT"),
-    }
+    "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=IS_RAILWAY)
 }
+
+# --- AUTRES PARAMÈTRES ---
+PORT = int(os.getenv("PORT", 8000))
 
 
 # Password validation
@@ -113,7 +154,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
@@ -125,23 +165,67 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 # === Static files (CSS, JS, images) ===
 STATIC_URL = "static/"
 
-# Dossier où Django va chercher tes fichiers statiques dans chaque app
+# Dossier où Django va chercher les fichiers statiques dans chaque app
 STATICFILES_DIRS = [
     BASE_DIR / "transport_project" / "static",
-
 ]
 
-# Dossier de collecte (utilisé en production)
+# Dossier de collecte (utilisé en production avec collectstatic)
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+# --- Sécurité HTTPS pour la prod ---
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 
+# --- Clé primaire par défaut ---
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# --- Configuration des logs ---
+import logging
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'django-error.log',  # <-- meilleure pratique : chemin absolu
+        },
+    },
+    'root': {
+        'handlers': ['console', 'file'],
+        'level': 'ERROR',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'questionnaire': {
+            'handlers': ['console', 'file'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    },
+}
+
+
+
+
+
+
+
+
