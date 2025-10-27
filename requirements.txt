@@ -12,7 +12,7 @@ reportlab==4.4.4
 
 # Graphiques
 matplotlib==3.10.6
-pycairo==1.28.0
+cairocffi==1.4.0
 pandas==2.1.1  # version stable récente
 
 # Utilitaires
