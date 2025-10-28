@@ -16,8 +16,9 @@ pycairo==1.26.0
 cairocffi==1.4.0
 
 # Graphiques
-matplotlib==3.9.2
+numpy==1.26.0
 pandas==2.1.1  # version stable récente
+matplotlib==3.9.2
 
 # Utilitaires
 python-dotenv==1.1.1
