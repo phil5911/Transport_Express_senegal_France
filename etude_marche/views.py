@@ -96,15 +96,24 @@ def generate_pdf_or_csv(request):
         if format_type == "csv":
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="etude_marche.csv"'
-            response.write("Ville;Nb_colis;Montant (€);Type_colis;Services_souhaites;Moyen_paiement;Sensibilite_prix\n")
+            response.write(
+                "Prenom;Nom;Age;Sexe;Ville;Email;Telephone;Adresse_postale;"
+                "Interet_transport;Frequence_voyage;Budget;Type_colis;Services_souhaites;"
+                "Moyen_paiement;Sensibilite_prix\n"
+            )
             return response
         else:
             return HttpResponse("Aucune donnée disponible pour générer le PDF.")
 
-    df = pd.DataFrame(list(reponses.values()))
+    # Récupération des champs souhaités
+    df = pd.DataFrame(list(reponses.values(
+        'prenom', 'nom', 'age', 'sexe', 'ville', 'email', 'telephone', 'adresse_postale',
+        'interet_transport', 'frequence_voyage', 'budget', 'type_colis', 'services_souhaites',
+        'moyen_paiement', 'sensibilite_prix'
+    )))
 
     # Colonnes numériques
-    numeric_cols = ['frequence_voyage', 'budget', 'interet_transport']
+    numeric_cols = ['frequence_voyage', 'budget']
     for col in numeric_cols:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)

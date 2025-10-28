@@ -21,9 +21,13 @@ class QuestionnaireForm(forms.ModelForm):
         model = Questionnaire
         fields = [
             'prenom',
+            'nom',
             'age',
             'sexe',
             'ville',
+            'email',
+            'telephone',
+            'adresse_postale',
             'interet_transport',
             'frequence_voyage',
             'budget',
