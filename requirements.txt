@@ -8,6 +8,8 @@ dj-database-url==3.0.1
 
 # Serveur WSGI pour le déploiement
 gunicorn==21.2.0
+whitenoise==6.5.0
+
 
 # Gestion des PDF
 xhtml2pdf==0.2.17
