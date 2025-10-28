@@ -43,7 +43,7 @@ else:
     ]
 
     CSRF_TRUSTED_ORIGINS = [
-        'https://web-production-f48c1.up.railway.app',
+        'https://web-production-4a4b.up.railway.app',
         'http://127.0.0.1:8000',
     ]
 
@@ -109,7 +109,7 @@ if DEBUG:
     ALLOWED_HOSTS = ["*"]
     CSRF_TRUSTED_ORIGINS = []
 else:
-    RAILWAY_HOST = os.getenv("RAILWAY_HOST", "web-production-f48c1.up.railway.app")
+    RAILWAY_HOST = os.getenv("RAILWAY_HOST", "web-production-4a4b.up.railway.app")
     ALLOWED_HOSTS = [RAILWAY_HOST, "127.0.0.1", "localhost"]
     CSRF_TRUSTED_ORIGINS = [f"https://{RAILWAY_HOST}", "http://127.0.0.1:8000"]
 
@@ -220,9 +220,7 @@ LOGGING = {
             'propagate': False,
         },
     },
-}[build]
-apt = ["python3-dev", "libcairo2-dev", "libpq-dev"]
-
+}
 
 
 
