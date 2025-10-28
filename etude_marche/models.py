@@ -3,9 +3,13 @@ from django.db import models
 
 class Questionnaire(models.Model):
     prenom = models.CharField(max_length=50)
+    nom = models.CharField(max_length=50, null=True, blank=True)
     age = models.IntegerField()
     sexe = models.CharField(max_length=1)
     ville = models.CharField(max_length=50)
+    email = models.EmailField(null=True, blank=True)
+    telephone = models.CharField(max_length=20, null=True, blank=True)
+    adresse_postale = models.TextField(null=True, blank=True)
 
     # Questions principales
     interet_transport = models.CharField(max_length=200)
@@ -44,3 +48,4 @@ class Reponse(models.Model):
 
     def __str__(self):
         return f"{self.nom} - {self.ville_depart} → {self.ville_arrivee}"
+

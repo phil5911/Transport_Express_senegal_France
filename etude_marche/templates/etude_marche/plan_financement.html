@@ -127,35 +127,52 @@
 
     <div class="section">
         <div class="section-title"><h2>Résumé des réponses</h2></div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Ville</th>
-                    <th>Fréquence</th>
-                    <th>Budget (FCFA)</th>
-                    <th>Type de colis</th>
-                    <th>Services souhaités</th>
-                    <th>Moyen de paiement</th>
-                    <th>Sensibilité au prix</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for r in reponses %}
-                <tr>
-                    <td>{{ r.ville }}</td>
-                    <td>{{ r.frequence_voyage }}</td>
-                    <td>{{ r.budget }}</td>
-                    <td>{{ r.type_colis }}</td>
-                    <td>{{ r.services_souhaites }}</td>
-                    <td>{{ r.moyen_paiement }}</td>
-                    <td>{{ r.sensibilite_prix }}</td>
-                </tr>
-                {% empty %}
-                <tr><td colspan="7">Aucune réponse disponible.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+        <table style="width:100%; border-collapse: collapse; font-size:10px; table-layout:fixed;">
+        <thead>
+            <tr>
+                <th style="width:6%;">Prénom</th>
+                <th style="width:6%;">Nom</th>
+                <th style="width:4%;">Âge</th>
+                <th style="width:4%;">Sexe</th>
+                <th style="width:7%;">Ville</th>
+                <th style="width:10%;">Email</th>
+                <th style="width:7%;">Téléphone</th>
+                <th style="width:10%;">Adresse postale</th>
+                <th style="width:8%;">Intérêt transport</th>
+                <th style="width:4%;">Fréquence</th>
+                <th style="width:5%;">Budget (FCFA)</th>
+                <th style="width:5%;">Type de colis</th>
+                <th style="width:8%;">Services souhaités</th>
+                <th style="width:6%;">Moyen de paiement</th>
+                <th style="width:6%;">Sensibilité au prix</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in reponses %}
+            <tr>
+                <td style="word-wrap: break-word;">{{ r.prenom }}</td>
+                <td style="word-wrap: break-word;">{{ r.nom }}</td>
+                <td>{{ r.age }}</td>
+                <td>{{ r.sexe }}</td>
+                <td style="word-wrap: break-word;">{{ r.ville }}</td>
+                <td style="word-wrap: break-word;">{{ r.email }}</td>
+                <td>{{ r.telephone }}</td>
+                <td style="word-wrap: break-word;">{{ r.adresse_postale }}</td>
+                <td style="word-wrap: break-word;">{{ r.interet_transport }}</td>
+                <td>{{ r.frequence_voyage }}</td>
+                <td>{{ r.budget }}</td>
+                <td>{{ r.type_colis }}</td>
+                <td style="word-wrap: break-word;">{{ r.services_souhaites }}</td>
+                <td>{{ r.moyen_paiement }}</td>
+                <td>{{ r.sensibilite_prix }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="15">Aucune réponse disponible.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
 </main>
 
 </body>

@@ -14,10 +14,30 @@
         {% csrf_token %}
         {{ form.non_field_errors }}
 
-        <!-- Champs standards -->
+        <!-- Informations personnelles -->
         <div class="question-card">
             {{ form.prenom.label_tag }} {{ form.prenom }}
             {% if form.prenom.errors %}<p style="color:red;">{{ form.prenom.errors }}</p>{% endif %}
+        </div>
+
+        <div class="question-card">
+            {{ form.nom.label_tag }} {{ form.nom }}
+            {% if form.nom.errors %}<p style="color:red;">{{ form.nom.errors }}</p>{% endif %}
+        </div>
+
+        <div class="question-card">
+            {{ form.email.label_tag }} {{ form.email }}
+            {% if form.email.errors %}<p style="color:red;">{{ form.email.errors }}</p>{% endif %}
+        </div>
+
+        <div class="question-card">
+            {{ form.telephone.label_tag }} {{ form.telephone }}
+            {% if form.telephone.errors %}<p style="color:red;">{{ form.telephone.errors }}</p>{% endif %}
+        </div>
+
+        <div class="question-card">
+            {{ form.adresse_postale.label_tag }} {{ form.adresse_postale }}
+            {% if form.adresse_postale.errors %}<p style="color:red;">{{ form.adresse_postale.errors }}</p>{% endif %}
         </div>
 
         <div class="question-card">
@@ -35,6 +55,7 @@
             {% if form.ville.errors %}<p style="color:red;">{{ form.ville.errors }}</p>{% endif %}
         </div>
 
+        <!-- Questions principales -->
         <div class="question-card">
             {{ form.interet_transport.label_tag }} {{ form.interet_transport }}
             {% if form.interet_transport.errors %}<p style="color:red;">{{ form.interet_transport.errors }}</p>{% endif %}
