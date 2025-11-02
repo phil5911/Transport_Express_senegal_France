@@ -1,73 +1,23 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Merci !</title>
-    <link rel="stylesheet" href="{% static 'css/questionnaire.css' %}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>Merci</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            color: #333;
-            text-align: center;
-            padding: 50px 20px;
-        }
-
-        h1 {
-            color: #2980B9;
-            font-size: 2.2em;
-        }
-
-        p {
-            font-size: 1.1em;
-            margin: 20px 0;
-        }
-
-        .download-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 30px;
-        }
-
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+        .download-buttons { margin-top: 30px; }
         .download-buttons a {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 15px 25px;
-            background-color: #27AE60;
-            color: white;
+            display: inline-block;
+            margin: 10px;
+            padding: 12px 25px;
             text-decoration: none;
-            border-radius: 8px;
+            color: white;
+            border-radius: 5px;
             font-weight: bold;
-            transition: background-color 0.3s, transform 0.2s;
         }
-
-        .download-buttons a.pdf {
-            background-color: #C0392B;
-        }
-
-        .download-buttons a:hover {
-            transform: scale(1.05);
-        }
-
-        .download-buttons a.pdf:hover {
-            background-color: #922B21;
-        }
-
-        .download-buttons a.csv:hover {
-            background-color: #1E8449;
-        }
-
-        @media (max-width: 480px) {
-            .download-buttons {
-                flex-direction: column;
-                gap: 15px;
-            }
-        }
+        .pdf { background-color: #E74C3C; }
+        .csv { background-color: #27AE60; }
+        .download-buttons i { margin-right: 8px; }
     </style>
 </head>
 <body>
@@ -75,12 +25,17 @@
     <p>Vous pouvez télécharger les résultats ci-dessous :</p>
 
     <div class="download-buttons">
-        <a class="pdf" href="{% url 'generate_pdf_or_csv' %}?format=pdf" target="_blank">
-            <i class="fas fa-file-pdf"></i> Télécharger PDF
-        </a>
-        <a class="csv" href="{% url 'generate_pdf_or_csv' %}?format=csv" target="_blank">
-            <i class="fas fa-file-csv"></i> Télécharger CSV
-        </a>
-    </div>
+    <a class="pdf" href="{% url 'generate_pdf_or_csv' %}?format=pdf" target="_blank">
+        Télécharger PDF
+    </a>
+    <a class="csv" href="{% url 'generate_pdf_or_csv' %}?format=csv" download="etude_marche.csv">
+        Télécharger CSV
+    </a>
+    <a class="excel" href="{% url 'generate_pdf_or_csv' %}?format=excel" download="etude_marche.xlsx">
+        Télécharger Excel
+    </a>
+</div>
+
+
 </body>
 </html>

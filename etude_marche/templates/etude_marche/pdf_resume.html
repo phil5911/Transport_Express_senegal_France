@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Plan de Financement - {{ projet }}</title>
+    <style>
+        @page { size: A4; margin: 50px 30px 70px 30px; }
+        body { font-family: Arial, sans-serif; color: #333; font-size: 12px; }
+        header { position: fixed; top: -40px; left: 0; right: 0; height: 50px; text-align: center; }
+        header img { height: 40px; }
+        footer { position: fixed; bottom: -50px; left: 0; right: 0; height: 40px;
+                 text-align: center; font-size: 12px; color: #555; }
+        h1, h2, h3 { color: #2C3E50; margin-bottom: 5px; }
+        .section { background-color: #f8f9fa; border-radius: 10px; padding: 10px; margin-bottom: 15px;
+                   box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .charts { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; }
+        .chart-container { flex: 1 1 48%; max-width: 48%; text-align: center; margin-bottom: 10px; }
+        img { max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 5px; padding: 3px; background: #fff; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 10px; table-layout: fixed; }
+        th, td { padding: 5px; border: 1px solid #ddd; text-align: left; word-wrap: break-word; }
+        th { background-color: #2980B9; color: white; }
+        .section-title { background-color: #3498DB; color: white; padding: 5px 10px; border-radius: 5px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<header>
+    {% if logo_url %}
+    <img src="{{ logo_url }}" alt="Logo">
+    {% endif %}
+    <h2>{{ projet }}</h2>
+</header>
+
+<footer>
+    Page <pdf:pagenumber> / <pdf:pagecount>
+</footer>
+
+<main>
+    <h1>{{ projet }}</h1>
+    <p><strong>Date de lancement :</strong> {{ date_lancement }}</p>
+    <p><strong>Type de transport :</strong> {{ transport_type }}</p>
+    <p><strong>Villes de départ :</strong> {{ villes_depart|join:", " }}</p>
+    <p><strong>Villes d'arrivée :</strong> {{ villes_arrivee|join:", " }}</p>
+    <p><strong>Clients ciblés :</strong> {{ clients }}</p>
+
+    <!-- --- Graphiques --- -->
+    <div class="section">
+        <div class="section-title"><h2>Graphiques de l'étude</h2></div>
+        <div class="charts">
+            {% for title, chart in charts_list %}
+            <div class="chart-container">
+                <h3>{{ title }}</h3>
+                {% if chart %}
+                    <img src="data:image/png;base64,{{ chart }}">
+                {% else %}
+                    <p>Aucune donnée disponible.</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- --- Tableau des réponses --- -->
+    <div class="section">
+        <div class="section-title"><h2>Résumé des réponses</h2></div>
+        <table style="width:100%; border-collapse: collapse; font-size:10px; table-layout:fixed;">
+<thead>
+<tr>
+    <th style="width:7%; word-wrap: break-word;">Prénom</th>
+    <th style="width:7%; word-wrap: break-word;">Nom</th>
+    <th style="width:3%;">Âge</th>
+    <th style="width:3%;">Sexe</th>
+    <th style="width:6%;">Ville</th>
+    <th style="width:18%; word-wrap: break-word; white-space: normal;">Email</th>
+    <th style="width:10%; word-wrap: break-word; white-space: normal;">Téléphone</th>
+    <th style="width:10%; word-wrap: break-word; white-space: normal;">Adresse</th>
+    <th style="width:6%;">Intérêt transport</th>
+    <th style="width:4%;">Fréquence</th>
+    <th style="width:5%;">Budget</th>
+    <th style="width:5%;">Type colis</th>
+    <th style="width:12%; word-wrap: break-word; white-space: normal;">Services souhaités</th>
+    <th style="width:6%; word-wrap: break-word; white-space: normal;">Moyen paiement</th>
+    <th style="width:4%;">Sensibilité prix</th>
+</tr>
+</thead>
+<tbody>
+{% for r in reponses %}
+<tr>
+    <td>{{ r.prenom }}</td>
+    <td>{{ r.nom }}</td>
+    <td>{{ r.age }}</td>
+    <td>{{ r.sexe }}</td>
+    <td>{{ r.ville }}</td>
+    <td>{{ r.email }}</td>
+    <td>{{ r.telephone }}</td>
+    <td>{{ r.adresse_postale }}</td>
+    <td>{{ r.interet_transport }}</td>
+    <td>{{ r.frequence_voyage }}</td>
+    <td>{{ r.budget }}</td>
+    <td>{{ r.type_colis }}</td>
+    <td>{{ r.services_souhaites }}</td>
+    <td>{{ r.moyen_paiement }}</td>
+    <td>{{ r.sensibilite_prix }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="15">Aucune réponse disponible.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+
+
+
+    </div>
+        <!-- --- Téléchargements --- -->
+    <div class="section">
+        <div class="section-title"><h2>Téléchargements</h2></div>
+        <p>
+            <a href="{% url 'generate_pdf_or_csv' %}?format=pdf" class="btn btn-danger">📄 Télécharger le PDF</a> |
+            <a href="{% url 'generate_pdf_or_csv' %}?format=csv" class="btn btn-success">📊 Télécharger le CSV</a> |
+            <a href="{% url 'generate_pdf_or_csv' %}?format=excel" class="btn btn-primary">📘 Télécharger Excel</a>
+        </p>
+    </div>
+</main>
+
+</body>
+</html>
+
+
