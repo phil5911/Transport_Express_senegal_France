@@ -82,50 +82,50 @@ def get_chart_image(series, title, color="#2980B9", show_values=False):
 
 # Wrapper sécurisée pour utiliser get_chart_image
 def safe_chart(data, title, color="#3498DB", show_values=False):
-    """Crée un graphique en toute sécurité et retourne une image Base64.
-
-    Args:
-        data: Série pandas ou liste de données.
-        title: Titre du graphique.
-        color: Couleur des barres ou histogramme.
-        show_values: Affiche les valeurs au-dessus des barres si True.
     """
+    Crée un graphique sous forme d'image Base64 (compatible xhtml2pdf).
+    """
+    import matplotlib.pyplot as plt
+    import io, base64
+    import pandas as pd
+
     if data is None or len(data) == 0:
         return None
 
-    fig, ax = plt.subplots(figsize=(5, 3))
+    fig, ax = plt.subplots(figsize=(6, 3.5))  # ✅ plus large
     try:
         # Si données numériques -> histogramme
         if pd.api.types.is_numeric_dtype(data):
             data.plot(kind="hist", bins=5, color=color, ax=ax)
         else:
-            # Si liste de listes, aplatir
+            # Aplatir les listes imbriquées (sécurité)
             if data.apply(lambda x: isinstance(x, list)).any():
-                data_flat = []
+                flat = []
                 for x in data:
                     if isinstance(x, list):
-                        data_flat.extend(x)
+                        flat.extend(x)
                     else:
-                        data_flat.append(x)
-                data = pd.Series(data_flat)
+                        flat.append(x)
+                data = pd.Series(flat)
 
-            plot_series = data.value_counts()
+            plot_series = data.value_counts().sort_values(ascending=False)
             plot_series.plot(kind="bar", color=color, ax=ax)
 
             if show_values:
                 for i, val in enumerate(plot_series):
-                    ax.text(i, val, str(val), ha="center", va="bottom", fontsize=8)
+                    ax.text(i, val + 0.2, str(val), ha="center", va="bottom", fontsize=8)
 
-        ax.set_title(title)
+        ax.set_title(title, fontsize=10, fontweight="bold")
+        ax.tick_params(axis='x', labelrotation=45, labelsize=8)
+        ax.tick_params(axis='y', labelsize=8)
         ax.set_xlabel('')
         ax.set_ylabel('')
-        plt.xticks(rotation=45, ha="right")
         plt.tight_layout()
 
-        buffer = io.BytesIO()
-        plt.savefig(buffer, format="png")
-        buffer.seek(0)
-        encoded = base64.b64encode(buffer.getvalue()).decode()
+        buf = io.BytesIO()
+        plt.savefig(buf, format="png", dpi=150)  # ✅ haute résolution pour PDF
+        buf.seek(0)
+        encoded = base64.b64encode(buf.read()).decode('utf-8')
         plt.close(fig)
         return encoded
 
@@ -133,7 +133,6 @@ def safe_chart(data, title, color="#3498DB", show_values=False):
         print(f"Erreur safe_chart pour {title}: {e}")
         plt.close(fig)
         return None
-
 
 # --------------------
 # Génération PDF / CSV
@@ -358,3 +357,5 @@ def plan_financement(request):
     }
 
     return render(request, "etude_marche/pdf_resume.html", contexte)
+
+
