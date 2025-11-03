@@ -338,6 +338,16 @@ def plan_financement(request):
     sensibilite_chart = safe_chart(df['sensibilite_prix'] if 'sensibilite_prix' in df.columns else None,
                                    "Sensibilité au prix", color="#C0392B")
 
+    charts_list = [
+        ("Participants par ville", ville_chart),
+        ("Fréquence de voyage", freq_chart),
+        ("Budget moyen par ville", budget_chart),
+        ("Type de colis", type_colis_chart),
+        ("Services souhaités", services_chart),
+        ("Moyens de paiement", paiement_chart),
+        ("Sensibilité au prix", sensibilite_chart)
+    ]
+
     contexte = {
         "projet": projet,
         "transport_type": transport_type,
@@ -353,9 +363,15 @@ def plan_financement(request):
         "services_chart": services_chart,
         "paiement_chart": paiement_chart,
         "sensibilite_chart": sensibilite_chart,
+        "charts_list": charts_list,
         "logo_url": "/static/images/logo.png",
     }
 
     return render(request, "etude_marche/pdf_resume.html", contexte)
+
+
+
+
+
 
 
