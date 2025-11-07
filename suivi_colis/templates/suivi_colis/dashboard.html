@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Mes envois</h2>
+<a class="btn btn-primary" href="{% url 'suivi_colis:create_shipment' %}">Créer un envoi</a>
+<ul>
+  {% for s in shipments %}
+    <li><a href="{% url 'suivi_colis:shipment_detail' s.id %}">{{ s.name }}</a> — {{ s.status }}</li>
+  {% empty %}
+    <li>Aucun envoi</li>
+  {% endfor %}
+</ul>
+{% endblock %}

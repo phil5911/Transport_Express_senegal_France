@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+<h2>Test paiement</h2>
+<button id="pay-button">Payer</button>
+<script>
+const stripe = Stripe("{{ STRIPE_PUBLIC_KEY }}");
+const clientSecret = "{{ client_secret }}";
+document.getElementById('pay-button').addEventListener('click', async () => {
+  const result = await stripe.confirmCardPayment(clientSecret, {
+    payment_method: {card: {token: "tok_visa"}}
+  });
+  if (result.error) alert(result.error.message);
+  else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') alert('Succès');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ shipment.name }}</h2>
+<p>Status: {{ shipment.status }}</p>
+
+<h3>Colis</h3>
+<ul>
+  {% for p in shipment.packages.all %}
+    <li>Colis {{ p.id }} — {{ p.type_colis }} — {{ p.weight_kg }} kg</li>
+  {% empty %}<li>Aucun colis</li>{% endfor %}
+</ul>
+
+<a href="{% url 'suivi_colis:add_package' shipment.pk %}" class="btn btn-primary">Ajouter un colis</a>
+
+<h3>Facture</h3>
+{% if shipment.invoice %}
+  <p>{{ shipment.invoice.invoice_number }} — {{ shipment.invoice.amount }} {{ shipment.invoice.currency }}</p>
+  <a href="{% url 'suivi_colis:invoice_pdf' shipment.pk %}" class="btn btn-info">Télécharger PDF</a>
+{% else %}
+  <p>Aucune facture</p>
+{% endif %}
+{% endblock %}
