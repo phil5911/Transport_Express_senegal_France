@@ -1,6 +1,7 @@
 # Django et extensions
 Django==5.2.7
 django-extensions==4.1
+stripe==13.1.2
 
 # Base de données
 psycopg2-binary==2.9.11
