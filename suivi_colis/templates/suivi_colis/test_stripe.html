@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Stripe</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    #card-element {
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 4px;
+      max-width: 400px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Paiement test</h2>
+  <div id="card-element"></div>
+  <div id="card-errors" style="color:red;"></div>
+
+  <script>
+    // ✅ Mets ici ta clé publique test complète
+    const stripe = Stripe('pk_test_XXXXXXXXXXXX');
+    const elements = stripe.elements();
+    const card = elements.create('card');
+    card.mount('#card-element');
+  </script>
+</body>
+</html>

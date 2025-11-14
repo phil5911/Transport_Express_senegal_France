@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "etude_marche",
+    "suivi_colis",
 ]
 
 MIDDLEWARE = [
@@ -75,7 +76,7 @@ ROOT_URLCONF = "transport_project.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -92,50 +93,64 @@ WSGI_APPLICATION = "transport_project.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+from decouple import config
 import os
 import dj_database_url
+import sys
+from django.conf import settings
 
 # --- ENVIRONNEMENT ---
-DEBUG = os.getenv("DEBUG", "True").lower() == "true"
-IS_RAILWAY = os.getenv("RAILWAY_ENVIRONMENT", "False").lower() == "true"
+DEBUG = config("DEBUG", default=True, cast=bool)
+IS_RAILWAY = config("RAILWAY_ENVIRONMENT", default=False, cast=bool)
 
 # --- SECRET KEY ---
-SECRET_KEY = os.getenv(
-    "SECRET_KEY",
-    "django-insecure-default-key"  # Valeur de secours pour dev local
-)
+SECRET_KEY = config("SECRET_KEY", default="django-insecure-default-key")
+
+# === STRIPE KEYS ===
+STRIPE_PUBLIC_KEY = config('STRIPE_PUBLIC_KEY', default='')
+STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY', default='')
+STRIPE_WEBHOOK_SECRET = config('STRIPE_WEBHOOK_SECRET', default='')
 
 # --- ALLOWED HOSTS & CSRF ---
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
     CSRF_TRUSTED_ORIGINS = []
 else:
-    RAILWAY_HOST = os.getenv("RAILWAY_HOST", "web-production-4a4b.up.railway.app")
+    RAILWAY_HOST = config("RAILWAY_HOST", default="web-production-4a4b.up.railway.app")
     ALLOWED_HOSTS = [RAILWAY_HOST, "127.0.0.1", "localhost"]
     CSRF_TRUSTED_ORIGINS = [f"https://{RAILWAY_HOST}", "http://127.0.0.1:8000"]
 
-# --- DATABASE ---
-DATABASE_URL = os.getenv("DATABASE_URL")
+# --- DATABASE DETECTION ---
+DATABASE_URL = config("DATABASE_URL", default=None)
 
-if not DATABASE_URL and not IS_RAILWAY:
-    # base locale
-    DATABASE_URL = (
-        f"postgresql://{os.getenv('LOCAL_DB_USER','admin')}:"
-        f"{os.getenv('LOCAL_DB_PASSWORD','123456')}@"
-        f"{os.getenv('LOCAL_DB_HOST','localhost')}:"
-        f"{os.getenv('LOCAL_DB_PORT','5432')}/"
-        f"{os.getenv('LOCAL_DB_NAME','transport_db')}"
+if DATABASE_URL and IS_RAILWAY:
+    print("\n🌐 Mode RAILWAY détecté — connexion à la base distante.\n")
+    DATABASES = {
+        "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
+    }
+else:
+    print("\n💻 Mode LOCAL détecté — connexion à la base PostgreSQL locale.\n")
+    LOCAL_DB = {
+        "NAME": config("DB_NAME", default="transport_db"),
+        "USER": config("DB_USER", default="admin"),
+        "PASSWORD": config("DB_PASSWORD", default="123456"),
+        "HOST": config("DB_HOST", default="localhost"),
+        "PORT": config("DB_PORT", default="5432"),
+    }
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            **LOCAL_DB,
+        }
+    }
+
+# --- Message d’info (quand on lance le serveur) ---
+if 'runserver' in sys.argv:
+    db_conf = DATABASES['default']
+    print(
+        f"✅ Django connecté à la base : {db_conf['NAME']} "
+        f"({db_conf['HOST']}:{db_conf['PORT']})\n"
     )
-elif not DATABASE_URL:
-    raise Exception("DATABASE_URL manquante !")
-
-DATABASES = {
-    "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=IS_RAILWAY)
-}
-
-# --- AUTRES PARAMÈTRES ---
-PORT = int(os.getenv("PORT", 8000))
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -225,6 +240,11 @@ LOGGING = {
 
 # Pour que WhiteNoise gère les fichiers statiques en prod
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+LOGIN_URL = '/projet-transport/suivi-colis/login/'
+
+
+
 
 
 

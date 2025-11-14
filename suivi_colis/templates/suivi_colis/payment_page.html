@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Paiement facture {{ invoice.pk }}</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    .StripeElement {
+      box-sizing: border-box;
+      height: 40px;
+      padding: 10px 12px;
+      border: 1px solid #ccd0d2;
+      border-radius: 4px;
+      background-color: white;
+      margin-bottom: 10px;
+    }
+    #card-container {
+      display: flex;
+      flex-direction: column;
+      width: 400px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Payer la facture {{ invoice.pk }} — {{ invoice.amount }} {{ invoice.currency }}</h1>
+
+  <form id="payment-form">
+    <div id="card-container">
+      <label>Numéro de carte</label>
+      <div id="card-number" class="StripeElement"></div>
+
+      <label>Expiration</label>
+      <div id="card-expiry" class="StripeElement"></div>
+
+      <label>CVC</label>
+      <div id="card-cvc" class="StripeElement"></div>
+    </div>
+
+    <button type="submit">Payer</button>
+    <div id="payment-result"></div>
+  </form>
+
+  <script>
+    const stripe = Stripe('{{ stripe_public_key }}');
+    const elements = stripe.elements();
+
+    const cardNumber = elements.create('cardNumber');
+    cardNumber.mount('#card-number');
+
+    const cardExpiry = elements.create('cardExpiry');
+    cardExpiry.mount('#card-expiry');
+
+    const cardCvc = elements.create('cardCvc');
+    cardCvc.mount('#card-cvc');
+
+    const form = document.getElementById('payment-form');
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const {error, paymentIntent} = await stripe.confirmCardPayment(
+        '{{ client_secret }}',
+        { payment_method: {
+            card: cardNumber,
+          }
+        }
+      );
+      const result = document.getElementById('payment-result');
+      if (error) {
+        result.textContent = error.message;
+      } else {
+        result.textContent = "Paiement réussi ! ✅";
+      }
+    });
+  </script>
+</body>
+</html>

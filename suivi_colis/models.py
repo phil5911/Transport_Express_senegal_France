@@ -1,6 +1,11 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+
+
+def generate_reference():
+    return f"REF-{uuid.uuid4().hex[:10].upper()}"
 
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='customer')
@@ -12,20 +17,46 @@ class Customer(models.Model):
 
 class Shipment(models.Model):
     STATUS_CHOICES = [
-        ('created','Créé'),
-        ('in_transit','En cours'),
-        ('delivered','Livré'),
-        ('cancelled','Annulé'),
+        ('created', 'Créé'),
+        ('in_transit', 'En cours'),
+        ('delivered', 'Livré'),
+        ('cancelled', 'Annulé'),
     ]
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='shipments')
+
+    customer = models.ForeignKey('Customer', on_delete=models.CASCADE, related_name='shipments')
+
+    # Référence unique générée automatiquement
+    reference = models.CharField(max_length=64, unique=True, editable=False, default=generate_reference)
+
     name = models.CharField(max_length=200, help_text="Titre / description")
     origin = models.CharField(max_length=200, blank=True)
     destination = models.CharField(max_length=200, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='created')
+
+    # Informations expéditeur
+    sender_name = models.CharField(max_length=255, blank=True, null=True)
+    sender_email = models.EmailField(blank=True, null=True)
+    sender_address = models.CharField(max_length=500, blank=True, null=True)
+
+    # Informations destinataire
+    receiver_name = models.CharField(max_length=255, blank=True, null=True)
+    receiver_email = models.EmailField(blank=True, null=True)
+    receiver_address = models.CharField(max_length=500, blank=True, null=True)
+
+    # Numéro de suivi optionnel
+    tracking_number = models.CharField(max_length=100, blank=True, null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def save(self, *args, **kwargs):
+        # Génère automatiquement une référence si absente
+        if not self.reference:
+            self.reference = f"REF-{uuid.uuid4().hex[:10].upper()}"
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"{self.name} ({self.id})"
+        return f"{self.reference} - {self.name}"
+
 
 class Package(models.Model):
     shipment = models.ForeignKey(Shipment, on_delete=models.CASCADE, related_name='packages')
@@ -73,5 +104,9 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"Payment {self.id} - {self.status}"
+
+
+
+
 
 

@@ -1,12 +1,12 @@
-{% extends "base.html" %}
-{% block content %}
-<h2>Mes envois</h2>
-<a class="btn btn-primary" href="{% url 'suivi_colis:create_shipment' %}">Créer un envoi</a>
-<ul>
-  {% for s in shipments %}
-    <li><a href="{% url 'suivi_colis:shipment_detail' s.id %}">{{ s.name }}</a> — {{ s.status }}</li>
-  {% empty %}
-    <li>Aucun envoi</li>
-  {% endfor %}
-</ul>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Tableau de bord</title>
+</head>
+<body>
+  <h1>Bienvenue {{ request.user.username }} 👋</h1>
+  <p>Tu es connecté à ton tableau de bord de suivi des colis.</p>
+  <a href="{%url 'suivi_colis:logout' %}">Se déconnecter</a>
+</body>
+</html>
