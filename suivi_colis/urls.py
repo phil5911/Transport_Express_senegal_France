@@ -13,8 +13,8 @@ urlpatterns = [
     path('invoice/<int:shipment_pk>/pdf/', views.invoice_pdf, name='invoice_pdf'),
     path('payment/<int:invoice_pk>/', views.payment_page, name='payment_page'),
     path('payment-intent/<int:invoice_pk>/', views.create_payment_intent, name='create_payment_intent'),
-    path('test-payment/', views.test_payment, name='test_payment'),
     path('test-payment/<int:invoice_pk>/', views.test_payment, name='test_payment'),
     path('stripe/webhook/', views.stripe_webhook, name='stripe_webhook'),
     path('test-email/', views.test_email, name='test_email'),
 ]
+
